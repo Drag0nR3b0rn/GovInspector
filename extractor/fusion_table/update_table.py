@@ -12,7 +12,7 @@ from fileimport.fileimporter import CSVImporter
 _TID = 946168
 
 def insert_row( data ):
-	token = ClientLogin().authorize("misha.genkin@gmail.com", "Mch@Gn88")
+	token = ClientLogin().authorize(username, password)
 	ft_client = ftclient.ClientLoginFTClient(token)
 	
 	query = "INSERT INTO 946168 (id, type, status, text, followup, link, report, unit, topic, office) VALUES (%d, %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s')"

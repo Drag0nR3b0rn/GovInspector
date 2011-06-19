@@ -27,6 +27,7 @@ def main():
 	for report in reports:
 		files = os.listdir( "./data/%s" % ( report, ) )
 		for file in files:
+			print "./data/%s/%s" % (report, file)
 			paragraphs = docx.getdocumenttext(docx.opendocx("./data/%s/%s" % (report, file)))
 			results = []
 			flag = False
@@ -65,10 +66,11 @@ def main():
 					results[-1][_POI_TYPES[type]] += re.sub("(\d+)\.?", "", paragraph).encode("utf-8") if len(paragraph) > 1 else ""
 			
 			#TODO: Properly compute status
+			json.dumps(results, open("./results.json", "w+"))
 			#A naive method to push the data to Google Fusion Table
-			for entry in results:
-				for inspectee in new_inspected:
-					update_table.insert_row( (entry["id"], entry["type"], entry["status"], entry["text"], entry["followup"], entry["link"], entry["report"], inspectee.encode("utf-8"), entry["topic"], entry["office"]) )
+			#for entry in results:
+			#	for inspectee in new_inspected:
+			#		update_table.insert_row( (entry["id"], entry["type"], entry["status"], entry["text"], entry["followup"], entry["link"], entry["report"], inspectee.encode("utf-8"), entry["topic"], entry["office"]) )
 		
 
 if __name__ == "__main__":
