@@ -46,9 +46,11 @@ def _create_simple_object( collection, id ):
 	
 
 def _parse_inspected( collection, raw_string):
+	#TODO: Parse offices & bodies differently
 	inspected = []
 	raw_string = raw_string.replace( EM_DASH, u"-" ) #replace em-dash
-	inspectees = raw_string.split( ":" )[1].split( ";" )
+	inspectees = raw_string.split( ":" )
+	inspectees = inspectees[0].split( ";" ) if len(inspectees) == 1 else inspectees[1].split( ";" )
 	for inspectee in inspectees:
 		if inspectee.find( u"-" ) == -1:
 			inspected.append( _create_simple_object( collection, inspectee.strip() ) )
@@ -56,7 +58,7 @@ def _parse_inspected( collection, raw_string):
 		else:
 			inspectee = inspectee.split( u"-" )
 			inspected.append( _create_simple_object( collection, inspectee[1].strip() ) )
-			collection[-2]["parent"] = _create_simple_object( collection, inspectee[0].strip() )
+			collection[-2]["parent"] = _parse_inspected( collection, inspectee[0].strip() )[0]
 			
 	return inspected
 
@@ -66,6 +68,7 @@ def _save_issue( collection, ids, type, text, topic, report, inspected ):
 	if type == 0: #Create new issue
 		collection.append( { "id": int( ids[0] ), "text": text, "type": 0, "status": 3, "followups": [], "topic": topic, "report": report, "inspected": inspected, "slug": "%s/%s/%s" % ( report, topic, int( ids[0] ) ) } )
 	elif type == 1: #Add followup text to an issue
+		#TODO: Save per unit followups
 		for id in ids:
 			for issue in collection:
 				if issue["id"] == int( id ):
@@ -75,7 +78,7 @@ def _save_issue( collection, ids, type, text, topic, report, inspected ):
 	
 	
 def main():
-	#os.chdir(os.path.dirname(__file__)) #Working path fix for NppExec, remove in production
+	os.chdir(os.path.dirname(__file__)) #Working path fix for NppExec, remove in production
 	
 	#Init data structures
 	offices = [] #list of { name, parent = "", slug }
